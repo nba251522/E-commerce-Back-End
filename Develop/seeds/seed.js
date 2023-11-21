@@ -1,78 +1,75 @@
-const router = require('express').Router();
-const { Tag, Product, ProductTag } = require('../../models');
+const sequelize = require('../config/connection');
+const { Category, Product, Tag, ProductTag } = require('../models');
 
-// The `/api/tags` endpoint
+const categoryData = [
+    { category_name: 'Computers' },
+    { category_name: 'Smartphones' },
+    { category_name: 'Audio' },
+    { category_name: 'Wearables' },
+];
 
-router.get('/', async (req, res) => {
-  try {
-    const tags = await Tag.findAll({
-      include: [{ model: Product }]
-    });
-    res.json(tags);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
+const productData = [
+    {
+        product_name: 'Gaming Laptop',
+        price: 1500.00,
+        stock: 10,
+        category_id: 1, 
+    },
+    {
+        product_name: 'Bluetooth Headphones',
+        price: 199.99,
+        stock: 25,
+        category_id: 3, 
+    },
+    {
+        product_name: 'Smartwatch',
+        price: 299.99,
+        stock: 15,
+        category_id: 4, 
+    },
+    {
+        product_name: 'Flagship Smartphone',
+        price: 999.99,
+        stock: 20,
+        category_id: 2,
+    },
+];
 
-router.get('/:id', async (req, res) => {
-  try {
-    const tag = await Tag.findOne({
-      where: { id: req.params.id },
-      include: [{ model: Product }]
-    });
+const tagData = [
+    { tag_name: 'Bestseller' },
+    { tag_name: 'New Arrival' },
+    { tag_name: 'Discount' },
+    { tag_name: 'Limited Edition' },
+];
 
-    if (!tag) {
-      res.status(404).json({ message: 'No tag found with this id!' });
-      return;
-    }
+const productTagData = [
+    {
+        product_id: 1, // Gaming Laptop
+        tag_id: 1,     // Bestseller
+    },
+    {
+        product_id: 2, // Bluetooth Headphones
+        tag_id: 3,     // Discount
+    },
+    {
+        product_id: 3, // Smartwatch
+        tag_id: 2,     // New Arrival
+    },
+    {
+        product_id: 4, // Flagship Smartphone
+        tag_id: 4,     // Limited Edition
+    },
+    // Add more product tags as needed
+];
 
-    res.json(tag);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
+const seedDatabase = async () => {
+    await sequelize.sync({ force: true });
+    await Category.bulkCreate(categoryData);
+    await Product.bulkCreate(productData);
+    await Tag.bulkCreate(tagData);
+    await ProductTag.bulkCreate(productTagData);
 
-router.post('/', async (req, res) => {
-  try {
-    const newTag = await Tag.create(req.body);
-    res.status(201).json(newTag);
-  } catch (err) {
-    res.status(400).json(err);
-  }
-});
+    process.exit(0);
+};
 
-router.put('/:id', async (req, res) => {
-  try {
-    const updatedTag = await Tag.update(req.body, {
-      where: { id: req.params.id }
-    });
-
-    if (!updatedTag[0]) {
-      res.status(404).json({ message: 'No tag found with this id!' });
-      return;
-    }
-
-    res.json(updatedTag);
-  } catch (err) {
-    res.status(400).json(err);
-  }
-});
-
-router.delete('/:id', async (req, res) => {
-  try {
-    const tagData = await Tag.destroy({
-      where: { id: req.params.id }
-    });
-
-    if (!tagData) {
-      res.status(404).json({ message: 'No tag found with this id!' });
-      return;
-    }
-
-    res.json(tagData);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-module.exports = router;
+seedDatabase();
