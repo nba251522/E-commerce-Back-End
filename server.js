@@ -1,8 +1,8 @@
 const express = require('express');
-const routes = require('./Develop/routes');
+const routes = require('./Develop/routes/api');
 // import sequelize connection
 const Sequelize = require('sequelize');
-const config = require('./config/config.js')[process.env.NODE_ENV || 'development'];
+const config = require('./Develop/config/config.js')[process.env.NODE_ENV || 'development'];
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
 const app = express();

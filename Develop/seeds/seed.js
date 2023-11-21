@@ -1,4 +1,4 @@
-const sequelize = require('../config/connection');
+const sequelize = require('../config/config.js');
 const { Category, Product, Tag, ProductTag } = require('../models');
 
 const categoryData = [
