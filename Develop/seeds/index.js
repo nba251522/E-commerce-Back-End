@@ -1,5 +1,5 @@
-const sequelize = require('../config/config.js');
-const { Category, Product, Tag, ProductTag } = require('../models');
+const { sequelize, Category, Product, Tag, ProductTag } = require('../models');
+
 
 const categoryData = [
     { category_name: 'Computers' },
@@ -63,13 +63,19 @@ const productTagData = [
 ];
 
 const seedDatabase = async () => {
-    await sequelize.sync({ force: true });
-    await Category.bulkCreate(categoryData);
-    await Product.bulkCreate(productData);
-    await Tag.bulkCreate(tagData);
-    await ProductTag.bulkCreate(productTagData);
+    try {
+        await sequelize.sync({ force: true });
+        await Category.bulkCreate(categoryData);
+        await Product.bulkCreate(productData);
+        await Tag.bulkCreate(tagData);
+        await ProductTag.bulkCreate(productTagData);
 
-    process.exit(0);
+        console.log('Seeding successful!');
+    } catch (error) {
+        console.error('Seeding failed:', error);
+    } finally {
+        process.exit(0);
+    }
 };
 
 seedDatabase();
