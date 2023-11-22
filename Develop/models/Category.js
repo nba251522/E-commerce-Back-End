@@ -1,11 +1,9 @@
 const { Model, DataTypes } = require('sequelize');
 
-const sequelize = require('../config/config.js');
+module.exports = (sequelize) => {
+  class Category extends Model {}
 
-class Category extends Model {}
-
-Category.init(
-  {
+  Category.init({
     // define columns
     id: {
       type: DataTypes.INTEGER,
@@ -17,14 +15,13 @@ Category.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-  },
-  {
-    sequelize,
+  }, {
+    sequelize, // Pass the sequelize instance
     timestamps: false,
     freezeTableName: true,
     underscored: true,
     modelName: 'category',
-  }
-);
+  });
 
-module.exports = Category;
+  return Category;
+};

@@ -1,28 +1,25 @@
-// import models
-const Product = require('./Product');
-const Category = require('./Category');
-const Tag = require('./Tag');
-const ProductTag = require('./ProductTag');
+const Sequelize = require('sequelize');
+const config = require('../config/config'); // Adjust the path as necessary
 
-// Products belongsTo Category
-Product.belongsTo(Category, {
-  foreignKey: 'category_id',
+const sequelize = new Sequelize(config.database, config.username, config.password, {
+  host: config.host,
+  dialect: config.dialect,
+  // other Sequelize options if needed
 });
-// Categories have many Products
-Category.hasMany(Product, {
-  foreignKey: 'category_id',
-});
-// Products belongToMany Tags (through ProductTag)
-Product.belongsToMany(Tag, {
-  through: ProductTag,
-  foreignKey: 'product_id',
-});
-// Tags belongToMany Products (through ProductTag)
-Tag.belongsToMany(Product, {
-  through: ProductTag,
-  foreignKey: 'tag_id',
-});
+
+const Product = require('./Product')(sequelize);
+const Category = require('./Category')(sequelize);
+const Tag = require('./Tag')(sequelize);
+const ProductTag = require('./ProductTag')(sequelize);
+
+// Define model relationships
+Product.belongsTo(Category, { foreignKey: 'category_id' });
+Category.hasMany(Product, { foreignKey: 'category_id' });
+Product.belongsToMany(Tag, { through: ProductTag, foreignKey: 'product_id' });
+Tag.belongsToMany(Product, { through: ProductTag, foreignKey: 'tag_id' });
+
 module.exports = {
+  sequelize,
   Product,
   Category,
   Tag,
